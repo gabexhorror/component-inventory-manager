@@ -27,7 +27,7 @@ jobs:
           cmake autoconf automake libtool pkg-config zip unzip \
           openjdk-17-jdk
     
-    - name: Install Buildozer and P4A
+    - name: Install Buildozer
       run: |
         pip install buildozer==1.5.0 cython==0.29.33
     
@@ -38,9 +38,12 @@ jobs:
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
         unzip -q commandlinetools-linux-9477386_latest.zip
         mkdir -p cmdline-tools/latest
-        cp -r cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
-        rm -rf cmdline-tools/bin cmdline-tools/lib 2>/dev/null || true
-        ls cmdline-tools/latest/
+        cp -r cmdline-tools/bin cmdline-tools/lib cmdline-tools/latest/ 2>/dev/null || true
+        mkdir -p licenses
+        echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > licenses/android-sdk-license
+        echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > licenses/android-sdk-preview-license
+        yes | cmdline-tools/latest/bin/sdkmanager --licenses || true
+        cmdline-tools/latest/bin/sdkmanager "build-tools;33.0.2" "platforms;android-33" || true
     
     - name: Download Android NDK
       run: |
@@ -48,19 +51,13 @@ jobs:
         wget -q https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
         unzip -q android-ndk-r25b-linux.zip
     
-    - name: Accept Licenses
-      run: |
-        mkdir -p $HOME/android-sdk/licenses
-        echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $HOME/android-sdk/licenses/android-sdk-license
-        echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $HOME/android-sdk/licenses/android-sdk-preview-license
-        echo "d56f5187479451eabf01fb78af6dfcb131a6481e" > $HOME/android-sdk/licenses/android-sdk-arm-dbt-license
-    
     - name: Build APK
       run: |
         export ANDROIDSDK=$HOME/android-sdk
         export ANDROIDNDK=$HOME/android-ndk-r25b
         export ANDROIDAPI=33
         export ANDROIDMINAPI=21
+        export PATH=$PATH:$HOME/android-sdk/build-tools/33.0.2
         buildozer android debug
     
     - name: Upload APK
