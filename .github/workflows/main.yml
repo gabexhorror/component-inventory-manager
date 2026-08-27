@@ -9,16 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v5
       with:
         python-version: '3.10'
     
     - name: Install Buildozer
       run: |
-        pip install buildozer cython==0.29.33
+        pip install buildozer==1.5.0 cython==0.29.33
     
     - name: Install System Dependencies
       run: |
@@ -48,8 +48,15 @@ jobs:
           pkg-config \
           zip \
           unzip
+    
     - name: Build APK
       run: |
+        export ANDROID_HOME=/home/runner/.buildozer/android/platform/android-sdk
+        export PATH=$PATH:$ANDROID_HOME/cmdline-tools/latest/bin
+        mkdir -p $ANDROID_HOME/licenses
+        echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
+        echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-preview-license
+        cd /home/runner/work/component-inventory/component-inventory
         buildozer android debug
     
     - name: Upload APK
