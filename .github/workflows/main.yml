@@ -56,7 +56,6 @@ jobs:
         mkdir -p $ANDROID_HOME/licenses
         echo "24333f8a63b6825ea9c5514f83c2829b004d1fee" > $ANDROID_HOME/licenses/android-sdk-license
         echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > $ANDROID_HOME/licenses/android-sdk-preview-license
-        cd /home/runner/work/component-inventory/component-inventory
         buildozer android debug
     
     - name: Upload APK
