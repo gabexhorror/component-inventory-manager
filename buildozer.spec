@@ -16,6 +16,9 @@ android.sdk = 33
 android.entrypoint = main.py
 android.permissions = INTERNET
 android.private_storage = True
+android.accept_sdk_license = True
+android.build_tools_versions = 33.0.2
+p4a.branch = master
 
 [buildozer]
 log_level = 2
